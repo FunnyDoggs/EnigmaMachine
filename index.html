@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma Machine Simulator</title>
+</head>
+<body>
+  <h1>Enigma Machine Simulator</h1>
+  <label for="plugboardInput">Plugboard Connections:</label>
+  <input type="text" id="plugboardInput" placeholder="Enter plugboard connections (e.g., AF, BG, CL)">
+  <br>
+  <label for="inputText">Enter text to encrypt:</label>
+  <textarea id="inputText" rows="4" cols="50"></textarea>
+  <br>
+  <label for="outputText">Encrypted text:</label>
+  <textarea id="outputText" rows="4" cols="50" readonly></textarea>
+  <br>
+  <button onclick="encrypt()">Encrypt</button>
+
+  <script>
+    // Enigma machine rotor settings
+    const rotor1 = "EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+    const rotor2 = "AJDKSIRUXBLHWTMCQGZNPYFVOE";
+    const rotor3 = "BDFHJLCPRTXVZNYEIWGAKMUSQO";
+
+    // Enigma machine reflector setting
+    const reflector = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+
+    // Default plugboard settings
+    let plugboard = {
+      'A': 'F', 'B': 'G', 'C': 'L', 'D': 'R', 'E': 'S',
+      'F': 'A', 'G': 'B', 'H': 'C', 'I': 'D', 'J': 'E',
+      'K': 'M', 'L': 'H', 'M': 'K', 'N': 'N', 'O': 'O',
+      'P': 'P', 'Q': 'Q', 'R': 'T', 'S': 'E', 'T': 'U',
+      'U': 'V', 'V': 'W', 'W': 'X', 'X': 'Y', 'Y': 'Z',
+      'Z': 'I'
+    };
+
+    function encrypt() {
+      const inputText = document.getElementById("inputText").value.toUpperCase();
+      let outputText = "";
+
+      // Update plugboard connections from the UI input
+      updatePlugboard();
+
+      for (let i = 0; i < inputText.length; i++) {
+        const letter = inputText[i];
+        if (letter >= 'A' && letter <= 'Z') {
+          const encryptedLetter = encryptLetter(letter);
+          outputText += encryptedLetter;
+          rotateRotors();
+        } else {
+          outputText += letter;
+        }
+      }
+
+      document.getElementById("outputText").value = outputText;
+    }
+
+    function encryptLetter(letter) {
+      // Pass through plugboard
+      let plugboardLetter = plugboard[letter] || letter;
+
+      // Pass through rotors
+      const rotor1Output = rotor1[(plugboardLetter.charCodeAt(0) - 'A'.charCodeAt(0) + rotor1Position) % 26];
+      const rotor2Output = rotor2[(rotor1Output.charCodeAt(0) - 'A'.charCodeAt(0) + rotor2Position) % 26];
+      const rotor3Output = rotor3[(rotor2Output.charCodeAt(0) - 'A'.charCodeAt(0) + rotor3Position) % 26];
+
+      // Pass through reflector
+      const reflectedOutput = reflector[rotor3Output.charCodeAt(0) - 'A'.charCodeAt(0)];
+
+      // Reverse through rotors
+      let reverseRotor3 = String.fromCharCode((rotor3.indexOf(reflectedOutput) - rotor3Position + 26) % 26 + 'A'.charCodeAt(0));
+      let reverseRotor2 = String.fromCharCode((rotor2.indexOf(reverseRotor3) - rotor2Position + 26) % 26 + 'A'.charCodeAt(0));
+      let reverseRotor1 = String.fromCharCode((rotor1.indexOf(reverseRotor2) - rotor1Position + 26) % 26 + 'A'.charCodeAt(0));
+
+      // Pass back through plugboard
+      let encryptedLetter = plugboard[reverseRotor1] || reverseRotor1;
+
+      return encryptedLetter;
+    }
+
+    function rotateRotors() {
+      rotor1Position = (rotor1Position + 1) % 26;
+
+      if (rotor1Position === 0) {
+        rotor2Position = (rotor2Position + 1) % 26;
+
+        if (rotor2Position === 0) {
+          rotor3Position = (rotor3Position + 1) % 26;
+        }
+      }
+    }
+
+    function updatePlugboard() {
+      const plugboardInput = document.getElementById("plugboardInput").value.toUpperCase();
+      plugboard = {};
+
+      // Parse plugboard connections from the input
+      for (let i = 0; i < plugboardInput.length; i += 2) {
+        const pair = plugboardInput.slice(i, i + 2);
+        if (pair.length === 2 && pair[0] >= 'A' && pair[0] <= 'Z' && pair[1] >= 'A' && pair[1] <= 'Z') {
+          plugboard[pair[0]] = pair[1];
+          plugboard[pair[1]] = pair[0];
+        }
+      }
+    }
+  </script>
+</body>
+</html>
