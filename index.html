@@ -13,15 +13,15 @@
 </head>
 <body>
   <h1>Enigma Machine Simulator</h1>
-  <label for="machineResetInstructions">Reload to fully reset machine</label>
-  <label for="plugboardInput">Plugboard Connections:</label>
+  <label for="machineResetInstructions">Reload to fully reset machine</label><br>
+  <label for="plugboardInput">Plugboard Connections:</label><br>
   <!-- Set the cols attribute to make the textarea wider -->
   <textarea id="plugboardInput" placeholder="Enter plugboard connections (e.g., AF, BG, CL)" rows="2" cols="50"></textarea>
   <br>
-  <label for="inputText">Enter text to encrypt:</label>
+  <label for="inputText">Enter text to encrypt:</label><br>
   <textarea id="inputText" rows="4" cols="50"></textarea>
   <br>
-  <label for="outputText">Encrypted text:</label>
+  <label for="outputText">Encrypted text:</label><br>
   <textarea id="outputText" rows="4" cols="50" readonly></textarea>
   <br>
   <button onclick="encrypt()">Encrypt</button>
