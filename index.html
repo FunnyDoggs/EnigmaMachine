@@ -24,7 +24,7 @@
   <textarea id="outputText" rows="4" cols="50" readonly></textarea>
   <br>
   <button onclick="encrypt()">Encrypt</button>
-  <button onclick="resetPage()">Reset</button>
+  <button onclick="resetRotors()">Reset Rotors</button>
 
   <script>
     // Enigma machine rotor settings
@@ -120,8 +120,13 @@
       }
     }
 
-    function resetPage() {
-      location.reload();
+    function resetRotors() {
+      rotor1Position = 0;
+      rotor2Position = 0;
+      rotor3Position = 0;
+      document.getElementById("plugboardInput").value = ""; // Clear plugboard input
+      document.getElementById("inputText").value = ""; // Clear input text
+      document.getElementById("outputText").value = ""; // Clear output text
     }
   </script>
 </body>
